@@ -1,0 +1,8 @@
+#!/bin/sh
+# Start Agent Emacs as its own Emacs instance, separate from any other
+# Emacs configuration on this machine.
+dir=$(cd "$(dirname "$0")/.." && pwd)
+if [ "$(uname)" = Darwin ] && [ -d /Applications/Emacs.app ]; then
+  exec open -n -a /Applications/Emacs.app --args --init-directory "$dir" "$@"
+fi
+exec emacs --init-directory "$dir" "$@"
