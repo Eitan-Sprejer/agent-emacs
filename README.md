@@ -31,7 +31,7 @@ It runs as its own Emacs instance, so it does not touch any Emacs configuration 
    ~/.config/agent-emacs/bin/agent-emacs
    ```
 
-The first start downloads and builds the packages, which takes a few minutes. When it is done, Agent Emacs runs `M-x agent-setup`: it checks that the agents are installed and offers to add the hooks Claude Code uses to tell Emacs when a session is waiting for you. You can run it again at any time.
+The first start downloads and builds the packages, which takes a few minutes. When it is done, Agent Emacs runs `M-x agent-setup`, which checks that the agents are installed. Agent Emacs never edits your Claude Code settings: the hooks that tell Emacs when a session is waiting for you are passed only to the sessions it starts, so `claude` in a terminal is unaffected. You can run `M-x agent-setup` again at any time.
 
 To start Agent Emacs from Spotlight or the Dock, create an app around the launcher, for example with Automator ("Run Shell Script": `~/.config/agent-emacs/bin/agent-emacs`).
 
