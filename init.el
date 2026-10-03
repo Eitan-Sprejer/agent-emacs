@@ -17,7 +17,24 @@
 ;; pinned to the commit recorded in lockfile.el.  The full clone (:depth
 ;; nil) is needed to check out a commit that is not the branch tip.
 (defvar elpaca-installer-version 0.12)
-(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+(defconst agent-emacs-lock-file (expand-file-name "lockfile.el" user-emacs-directory)
+  "Lock file recording the package versions this configuration was tested with.")
+
+(defconst agent-emacs-packages-root (expand-file-name "elpaca/" user-emacs-directory)
+  "Directory holding one package directory per lock file version.")
+
+;; Packages are installed in a directory named after the lock file's
+;; contents.  Elpaca never moves installed packages to new locked commits,
+;; so an update that changes the lock file installs into a fresh directory.
+(defvar elpaca-directory
+  (expand-file-name
+   (if (file-exists-p agent-emacs-lock-file)
+       (substring (with-temp-buffer
+                    (insert-file-contents-literally agent-emacs-lock-file)
+                    (secure-hash 'sha1 (current-buffer)))
+                  0 12)
+     "unlocked")
+   agent-emacs-packages-root))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-sources-directory (expand-file-name "sources/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
@@ -56,9 +73,17 @@
 (elpaca `(,@elpaca-order))
 
 ;; Install the exact package versions this configuration was tested with.
-(let ((lock-file (expand-file-name "lockfile.el" user-emacs-directory)))
-  (when (file-exists-p lock-file)
-    (setq elpaca-lock-file lock-file)))
+(when (file-exists-p agent-emacs-lock-file)
+  (setq elpaca-lock-file agent-emacs-lock-file))
+
+(defun agent-emacs-remove-old-packages ()
+  "Delete package directories left by earlier lock file versions."
+  (dolist (directory (directory-files agent-emacs-packages-root t "\\`[^.]"))
+    (unless (or (not (file-directory-p directory))
+                (file-equal-p directory elpaca-directory))
+      (delete-directory directory t))))
+
+(add-hook 'elpaca-after-init-hook #'agent-emacs-remove-old-packages)
 
 (elpaca elpaca-use-package
   (elpaca-use-package-mode))

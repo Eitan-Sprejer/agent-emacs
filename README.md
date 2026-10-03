@@ -56,7 +56,11 @@ Sessions also appear as tabs along the top, coloured when they are waiting for i
 cd ~/.config/agent-emacs && git pull
 ```
 
-Then restart Agent Emacs. Package versions are pinned in `lockfile.el`, so everyone runs the versions this configuration was tested with.
+Then restart Agent Emacs. Package versions are pinned in `lockfile.el`, so everyone runs the versions this configuration was tested with. When an update changes those versions, the next start installs them afresh, which takes a few minutes, and removes the old ones.
+
+## Develop
+
+`test/smoke-test.sh` installs Agent Emacs from scratch in a throwaway home directory and checks that every package is at its locked commit, that startup is clean and that `agent-setup` passes. After changing packages, regenerate the lock file from a tested install with `M-x elpaca-write-lock-file`, and update the Elpaca commit pinned in `init.el` to the one it records.
 
 ## Customize
 
