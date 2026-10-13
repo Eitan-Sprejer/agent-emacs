@@ -1,8 +1,10 @@
-/elpaca/
-/eln-cache/
-/var/
-/user.el
-/auto-save-list/
-/transient/
-/tree-sitter/
-/url/
+# Emacs and the packages write their state next to these files, so ignore
+# everything that is not part of Agent Emacs itself.
+/*
+!/.gitignore
+!/README.md
+!/bin/
+!/early-init.el
+!/init.el
+!/lockfile.el
+!/test/
