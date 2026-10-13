@@ -8,12 +8,16 @@ It runs as its own Emacs instance, so it does not touch any Emacs configuration 
 
 ## Install (macOS)
 
-1. Install Emacs 30 or later, Git and Node:
+1. Install Emacs 30 or later, Git and Node. [Emacs+](https://github.com/d12frosted/homebrew-emacs-plus) is recommended; its prebuilt app installs in about a minute on an Apple Silicon Mac with macOS 15 or later:
 
    ```sh
-   brew install --cask emacs
+   brew trust d12frosted/emacs-plus
+   brew tap d12frosted/emacs-plus
+   brew install --cask emacs-plus-app
    brew install git node
    ```
+
+   Any other Emacs 30 or later installed as `/Applications/Emacs.app` works too, such as `brew install --cask emacs`, but only Emacs+ can hide the window's title bar.
 
    Optionally, install the fonts Agent Emacs is designed around. Without them it uses Menlo and a mode line without icons.
 
@@ -52,7 +56,7 @@ To start Agent Emacs from Spotlight or the Dock, create an app around the launch
 | `C-x g` | Git status (Magit) |
 | `C-x p f` | Open a file in the current project |
 
-`C-c` means Control-c; `M-x` means Option-x. `C-g` cancels anything. Cmd-C, Cmd-V, Cmd-Z and Cmd-S work as in any Mac app. The window has no title bar; Cmd-Q quits. After a prefix such as `C-x`, wait a moment and a list of what can follow appears. `M-x agent-emacs-welcome` shows the key overview again.
+`C-c` means Control-c; `M-x` means Option-x. `C-g` cancels anything. Cmd-C, Cmd-V, Cmd-Z and Cmd-S work as in any Mac app. Under Emacs+ the window has no title bar; Cmd-Q quits. After a prefix such as `C-x`, wait a moment and a list of what can follow appears. `M-x agent-emacs-welcome` shows the key overview again.
 
 Agent Emacs starts with the window split into two columns, so that two sessions fit side by side: the left one is empty, ready for your first session, and the right one lists the main keys. Sessions also appear as tabs along the top, coloured when they are waiting for input, and you get a notification when an agent finishes.
 
