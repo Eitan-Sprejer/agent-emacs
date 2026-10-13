@@ -293,6 +293,26 @@
   :config
   (marginalia-mode 1))
 
+;; Completion while typing in a buffer, such as the commands offered after
+;; "/" in a Codex session, in a popup at the cursor.
+(use-package corfu
+  :demand t
+  :custom
+  (corfu-auto t)
+  (corfu-auto-prefix 3)
+  (corfu-auto-delay 0.5)
+  (corfu-cycle t)
+  (corfu-quit-no-match t)
+  :bind
+  (:map corfu-map
+        ("TAB" . nil)
+        ("<tab>" . nil)
+        ("RET" . corfu-complete)
+        ("<return>" . corfu-complete))
+  :config
+  (global-corfu-mode 1)
+  (corfu-history-mode 1))
+
 (use-package consult
   :bind
   (("C-x b" . consult-buffer)
@@ -447,9 +467,12 @@ wrapping in a terminal; Iosevka Fixed keeps every character to one cell."
 (setq initial-buffer-choice #'agent-emacs-welcome)
 
 (defun agent-emacs-split-into-columns ()
-  "Split the frame into two columns, to hold two sessions side by side."
+  "Split the frame into two columns, to hold two sessions side by side.
+The left column is empty and selected, so the first session opens there
+while the welcome buffer stays in view on the right."
   (when (one-window-p)
-    (split-window-right)))
+    (set-window-buffer (split-window-right) (agent-emacs-welcome))
+    (switch-to-buffer (get-scratch-buffer-create))))
 
 (add-hook 'window-setup-hook #'agent-emacs-split-into-columns)
 

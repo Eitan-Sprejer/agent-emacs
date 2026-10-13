@@ -58,7 +58,8 @@ result=$("$emacsclient" -s "$name" -e '
   (when-let* ((warnings (get-buffer "*Warnings*")))
     (push (with-current-buffer warnings (buffer-string)) problems))
   (dolist (mode (quote (agent-claude-mode agent-codex-mode agent-tab-bar-mode
-                       tab-bar-mode doom-modeline-mode spacious-padding-mode)))
+                       tab-bar-mode doom-modeline-mode spacious-padding-mode
+                       global-corfu-mode)))
     (unless (symbol-value mode) (push (format "%s is off" mode) problems)))
   (cl-letf (((symbol-function (quote y-or-n-p)) (lambda (&rest _) t)))
     (save-window-excursion (agent-setup)))

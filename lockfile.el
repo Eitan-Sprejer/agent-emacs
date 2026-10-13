@@ -57,6 +57,11 @@
                     :source "MELPA" :id consult :type git :protocol https
                     :inherit t :depth treeless :ref
                     "e1183ed28bd921974b13c4bef2c7a8289607ddc3"))
+ (corfu :source "elpaca-menu-lock-file" :recipe
+        (:package "corfu" :repo "minad/corfu" :files
+                  (:defaults "extensions/corfu-*.el") :fetcher github :source
+                  "MELPA" :id corfu :type git :protocol https :inherit t :depth
+                  treeless :ref "b468efac023dda39332acc943edc9895c80b5a6f"))
  (dash :source "elpaca-menu-lock-file" :recipe
        (:package "dash" :fetcher github :repo "magnars/dash.el" :files
                  ("dash.el" "dash.texi") :source "MELPA" :id dash :type git
