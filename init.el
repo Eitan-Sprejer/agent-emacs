@@ -446,6 +446,13 @@ wrapping in a terminal; Iosevka Fixed keeps every character to one cell."
 
 (setq initial-buffer-choice #'agent-emacs-welcome)
 
+(defun agent-emacs-split-into-columns ()
+  "Split the frame into two columns, to hold two sessions side by side."
+  (when (one-window-p)
+    (split-window-right)))
+
+(add-hook 'window-setup-hook #'agent-emacs-split-into-columns)
+
 (defun agent-emacs-offer-setup ()
   "Run `agent-setup' the first time Agent Emacs starts."
   (unless (file-exists-p agent-emacs-setup-marker)
