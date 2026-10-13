@@ -197,12 +197,38 @@
                 "defaults read -g AppleInterfaceStyle 2>/dev/null"))
               "Dark")))
 
+;; The Modus themes ship with Emacs.  Their tinted variants soften the
+;; background, and the intense preset colours the mode line.
+(require-theme 'modus-themes)
+
+(setq modus-themes-common-palette-overrides
+      `((fringe unspecified)
+        (bg-prose-block-delimiter bg-inactive)
+        (fg-prose-block-delimiter gray)
+        ,@modus-themes-preset-overrides-intense))
+
 (defun agent-emacs-match-system-theme ()
   "Load the light or dark Modus theme to match the system appearance."
-  (let ((theme (if (agent-emacs-system-dark-p) 'modus-vivendi 'modus-operandi)))
+  (let ((theme (if (agent-emacs-system-dark-p)
+                   'modus-vivendi-tinted
+                 'modus-operandi-tinted)))
     (unless (memq theme custom-enabled-themes)
       (mapc #'disable-theme custom-enabled-themes)
       (load-theme theme t))))
+
+(defun agent-emacs-style-faces (&rest _)
+  "Style the tab bar and window dividers to go with the current theme."
+  (let ((active (face-background 'mode-line-active nil t)))
+    (set-face-attribute 'tab-bar nil :background active
+                        :box `(:line-width 6 :color ,active :style nil)))
+  ;; `spacious-padding' paints the dividers in the background colour,
+  ;; which hides them.
+  (custom-set-faces '(window-divider (( ))))
+  (set-face-attribute 'window-divider nil
+                      :foreground (face-background 'mode-line-inactive nil t)))
+
+;; After the theme and `spacious-padding' have set their own faces.
+(add-hook 'enable-theme-functions #'agent-emacs-style-faces 90)
 
 (setq default-frame-alist
       (seq-remove (lambda (parameter)
@@ -212,8 +238,42 @@
 (when (eq system-type 'darwin)
   (run-with-timer 5 5 #'agent-emacs-match-system-theme))
 
-(when (and (display-graphic-p) (member "Menlo" (font-family-list)))
-  (set-face-attribute 'default nil :family "Menlo" :height 140))
+;; Iosevka when it is installed (see the README), else Menlo, which every
+;; Mac has.
+(when (display-graphic-p)
+  (cond ((member "Iosevka" (font-family-list))
+         (set-face-attribute 'default nil :family "Iosevka" :height 120)
+         (set-face-attribute 'fixed-pitch nil :family "Iosevka"))
+        ((member "Menlo" (font-family-list))
+         (set-face-attribute 'default nil :family "Menlo" :height 140))))
+
+;; The tab bar lists the agent sessions and nothing else.
+(setq tab-bar-format nil)
+(tab-bar-mode 1)
+
+(setq-default line-spacing 2)
+(setq ns-use-thin-smoothing t
+      window-divider-default-right-width 1)
+(window-divider-mode 1)
+
+;; Padding around the mode line, header line and tab bar.  The empty list
+;; keeps the frame's own borders and dividers as they are.
+(use-package spacious-padding
+  :demand t
+  :custom
+  (spacious-padding-widths '())
+  :config
+  (spacious-padding-mode 1)
+  (agent-emacs-style-faces))
+
+(use-package doom-modeline
+  :demand t
+  :custom
+  ;; The icons need the Symbols Nerd Font (see the README); without it
+  ;; they would show as empty boxes.
+  (doom-modeline-icon (and (member "Symbols Nerd Font Mono" (font-family-list)) t))
+  :config
+  (doom-modeline-mode 1))
 
 ;;;; Completion
 
@@ -270,7 +330,17 @@
                    (:exclude ".dir-locals.el" "*-tests.el")))
   :custom
   (eat-term-name "xterm-256color")
-  (eat-kill-buffer-on-exit t))
+  (eat-kill-buffer-on-exit t)
+  :hook
+  (eat-mode . agent-emacs-use-strict-monospace-font))
+
+(defun agent-emacs-use-strict-monospace-font ()
+  "Use Iosevka Fixed in the current buffer when Iosevka is the default font.
+Iosevka draws some characters wider than one cell, which breaks line
+wrapping in a terminal; Iosevka Fixed keeps every character to one cell."
+  (when (and (equal (face-attribute 'default :family) "Iosevka")
+             (member "Iosevka Fixed" (font-family-list)))
+    (face-remap-add-relative 'default :family "Iosevka Fixed")))
 
 ;;;; AI agents
 

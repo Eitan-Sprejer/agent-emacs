@@ -3,8 +3,9 @@
 # starts cleanly.  Needs network access; takes a few minutes.
 #
 # Checks: every package in lockfile.el is installed at its locked commit,
-# startup leaves no warnings, the agent modes are on, and agent-setup
-# reports nothing missing other than programs absent from this machine.
+# startup leaves no warnings, the agent and appearance modes are on, and
+# agent-setup reports nothing missing other than programs absent from this
+# machine.
 set -eu
 
 repo=$(cd "$(dirname "$0")/.." && pwd)
@@ -56,7 +57,8 @@ result=$("$emacsclient" -s "$name" -e '
         (push (format "%s at %s, locked %s" id head ref) problems))))
   (when-let* ((warnings (get-buffer "*Warnings*")))
     (push (with-current-buffer warnings (buffer-string)) problems))
-  (dolist (mode (quote (agent-claude-mode agent-codex-mode agent-tab-bar-mode)))
+  (dolist (mode (quote (agent-claude-mode agent-codex-mode agent-tab-bar-mode
+                       tab-bar-mode doom-modeline-mode spacious-padding-mode)))
     (unless (symbol-value mode) (push (format "%s is off" mode) problems)))
   (cl-letf (((symbol-function (quote y-or-n-p)) (lambda (&rest _) t)))
     (save-window-excursion (agent-setup)))

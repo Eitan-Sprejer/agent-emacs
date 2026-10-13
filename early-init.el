@@ -21,7 +21,9 @@
 ;; warnings are for package authors, so do not pop them up.
 (setq native-comp-async-report-warnings-errors 'silent)
 
-;; Frame: no toolbar or scroll bars, maximized, no flash of unstyled UI.
+;; Frame: no title bar, toolbar or scroll bars, maximized, no flash of
+;; unstyled UI.
+(push '(undecorated-round . t) default-frame-alist)
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
 (push '(horizontal-scroll-bars) default-frame-alist)
@@ -37,7 +39,7 @@
                    (shell-command-to-string
                     "defaults read -g AppleInterfaceStyle 2>/dev/null"))
                   "Dark"))
-  (push '(background-color . "#000000") default-frame-alist)
+  (push '(background-color . "#0d0e1c") default-frame-alist)
   (push '(foreground-color . "#ffffff") default-frame-alist))
 
 ;;; early-init.el ends here
