@@ -2,6 +2,10 @@
 # Start Agent Emacs as its own Emacs instance, separate from any other
 # Emacs configuration on this machine.
 dir=$(cd "$(dirname "$0")/.." && pwd)
+# Launched from inside a Claude Code session, Emacs would pass that session's
+# markers on to every session it starts; CLAUDE_CODE_CHILD_SESSION, for one,
+# turns off transcript saving.  `open' forwards the environment, so drop them.
+unset CLAUDECODE $(env | sed -n 's/^\(CLAUDE_CODE_[A-Za-z0-9_]*\)=.*/\1/p')
 if [ "$(uname)" = Darwin ] && [ -d /Applications/Emacs.app ]; then
   exec open -n -a /Applications/Emacs.app --args --init-directory "$dir" "$@"
 fi
